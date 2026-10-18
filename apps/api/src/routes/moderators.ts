@@ -241,7 +241,7 @@ const moderatorRoutes: FastifyPluginAsync<Options> = async (fastify, { db }) => 
       { id: caseId, 'publicProfile.requested': true, 'publicProfile.requestedAt': caseInfo.publicProfile.requestedAt, 'publicProfile.fields': 'name', status: 'Review' },
       { $set: { visibility: 'public', status: 'Active', publishedAt: now, publishedBy: moderator.id, updatedAt: now } }
     );
-    if (updated.modifiedCount !== 1) return reply.code(409).send({ error: 'The family's publication settings or case status changed. Reload and review again.' });
+    if (updated.modifiedCount !== 1) return reply.code(409).send({ error: "The family's publication settings or case status changed. Reload and review again." });
     const action = { id: randomUUID(), type: 'case-published', caseId, moderatorId: moderator.id, createdAt: now };
     await moderationActions.insertOne(action);
     await db.collection('auditLogs').insertOne({ id: randomUUID(), actorId: moderator.id, action: 'moderator.case-published', entityType: 'case', entityId: caseId, moderationActionId: action.id, createdAt: now });

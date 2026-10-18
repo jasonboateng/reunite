@@ -11,7 +11,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: 'REUNITE | Report. Find. Reunite.',
-  description: 'Ghana's citizen-powered missing persons reporting platform.'
+  description: "Ghana's citizen-powered missing persons reporting platform."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

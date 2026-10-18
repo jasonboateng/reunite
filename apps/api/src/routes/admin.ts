@@ -58,12 +58,12 @@ const adminRoutes: FastifyPluginAsync<Options> = async (fastify, { db }) => {
     const hasReviewer = currentRoles.includes('reviewer');
     if (hasReviewer === body.enabled) return { user: { id: target.id, name: target.name, email: target.email, roles: currentRoles }, changed: false };
     const roles = body.enabled ? Array.from(new Set([...currentRoles, 'reviewer' as const])) : currentRoles.filter((role) => role !== 'reviewer');
-    if (!roles.length) return reply.code(409).send({ error: 'Reviewer access cannot be the account's only role. Preserve a family, moderator, or admin role.' });
+    if (!roles.length) return reply.code(409).send({ error: "Reviewer access cannot be the account's only role. Preserve a family, moderator, or admin role." });
     const now = new Date().toISOString();
     const roleFilter = target.roles ? { roles: target.roles } : { role: target.role, roles: { $exists: false } };
     const primaryRole = roles.includes(target.role) ? target.role : roles[0];
     const saved = await users.updateOne({ id: userId, ...roleFilter }, { $set: { roles, role: primaryRole } });
-    if (saved.modifiedCount !== 1) return reply.code(409).send({ error: 'This account's roles changed while you were updating them. Reload and try again.' });
+    if (saved.modifiedCount !== 1) return reply.code(409).send({ error: "This account's roles changed while you were updating them. Reload and try again." });
     await auditLogs.insertOne({
       id: randomUUID(), actorId: admin.id, action: body.enabled ? 'reviewer.role-granted' : 'reviewer.role-revoked',
       entityType: 'user', entityId: userId, email: target.email, roles, createdAt: now

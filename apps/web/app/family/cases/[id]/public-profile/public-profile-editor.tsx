@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../../../../lib/api';
 
 type CaseData = { id: string; caseNumber: string; name: string; age: string; region: string; lastSeen: string; status: string; visibility: string; imageAssetId?: string; publicProfile?: { fields: string[]; summary: string; requested: boolean } };
 const choices = [
-  ['name', 'Person's name'], ['age', 'Age'], ['region', 'Region'], ['lastSeen', 'Last seen details'], ['summary', 'Family-written summary'], ['photo', 'Missing person photo']
+  ['name', "Person's name"], ['age', 'Age'], ['region', 'Region'], ['lastSeen', 'Last seen details'], ['summary', 'Family-written summary'], ['photo', 'Missing person photo']
 ] as const;
 
 export default function PublicProfileEditor({ caseId }: { caseId: string }) {

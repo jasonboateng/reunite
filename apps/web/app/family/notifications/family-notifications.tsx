@@ -63,7 +63,7 @@ export default function FamilyNotifications() {
 
   return <div className="module-page family-notifications-page">
     <Link href="/family/dashboard" className="back-link"> Your cases</Link>
-    <div className="page-header"><div><p className="eyebrow">FAMILY WORKSPACE</p><h1>Notifications</h1><p>{unreadCount ? `${unreadCount} unread update${unreadCount === 1 ? '' : 's'}` : 'You're up to date.'}</p></div>{unreadCount ? <button className="secondary-button" type="button" onClick={() => void markAllRead()} disabled={busy !== ''}>{busy === 'all' ? 'Updating...' : 'Mark all as read'}</button> : null}</div>
+    <div className="page-header"><div><p className="eyebrow">FAMILY WORKSPACE</p><h1>Notifications</h1><p>{unreadCount ? `${unreadCount} unread update${unreadCount === 1 ? '' : 's'}` : "You're up to date."}</p></div>{unreadCount ? <button className="secondary-button" type="button" onClick={() => void markAllRead()} disabled={busy !== ''}>{busy === 'all' ? 'Updating...' : 'Mark all as read'}</button> : null}</div>
     <div className="prototype-banner"><strong>Private account updates</strong><span>Notification details are visible only after you sign in. Email alerts, when configured, contain no private case information.</span></div>
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {notice ? <p className="status-message" role="status">{notice}</p> : null}

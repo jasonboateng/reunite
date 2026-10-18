@@ -89,7 +89,7 @@ const reviewRoutes: FastifyPluginAsync<Options> = async (fastify, { db }) => {
 
     if (body.decision === 'publish') {
       if (!caseInfo.publicProfile?.requested || !caseInfo.publicProfile.fields.includes('name')) {
-        return reply.code(409).send({ error: 'The family must request publication and select the person's name first.' });
+        return reply.code(409).send({ error: "The family must request publication and select the person's name first." });
       }
       const saved = await cases.updateOne({
         id: caseId, status: 'Review', updatedAt: caseInfo.updatedAt,

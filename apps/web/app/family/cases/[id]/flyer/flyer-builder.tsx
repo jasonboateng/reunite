@@ -8,7 +8,7 @@ import { API_BASE_URL } from '../../../../lib/api';
 type FlyerField = 'name' | 'age' | 'region' | 'lastSeen' | 'summary' | 'contact';
 type FlyerCase = { id: string; caseNumber: string; name: string; age: string; region: string; lastSeen: string; description: string; contact: string; imageAssetId?: string; flyerProfile?: { fields: FlyerField[]; summary: string } };
 const fieldOptions: { id: FlyerField; label: string; note: string }[] = [
-  { id: 'name', label: 'Person's name', note: 'Required on every flyer' },
+  { id: 'name', label: "Person's name", note: 'Required on every flyer' },
   { id: 'age', label: 'Age', note: 'Shown only when selected' },
   { id: 'region', label: 'Region', note: 'Shown only when selected' },
   { id: 'lastSeen', label: 'Last seen details', note: 'Shown only when selected' },
