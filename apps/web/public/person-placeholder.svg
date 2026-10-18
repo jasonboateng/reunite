@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 720" role="img" aria-labelledby="title">
+  <title id="title">Person photo not available</title>
+  <rect width="640" height="720" fill="#e8f1f8"/>
+  <circle cx="320" cy="250" r="112" fill="#b8cddd"/>
+  <path d="M100 690c13-164 99-255 220-255s207 91 220 255" fill="#b8cddd"/>
+  <path d="M0 0h640v720H0z" fill="none" stroke="#d4e2ec" stroke-width="8"/>
+</svg>

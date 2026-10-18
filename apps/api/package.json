@@ -1,0 +1,25 @@
+{
+  "name": "@reunite/api",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "reviewer:grant": "tsx scripts/grant-reviewer.ts",
+    "reviewer:revoke": "tsx scripts/grant-reviewer.ts --revoke",
+    "admin:grant": "tsx scripts/set-admin.ts",
+    "admin:revoke": "tsx scripts/set-admin.ts --revoke"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.0.0",
+    "cloudinary": "^2.11.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.0",
+    "mongodb": "^6.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4"
+  }
+}
