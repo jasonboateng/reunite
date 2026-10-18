@@ -65,8 +65,8 @@ export default function ImageUpload({ kind, caseId, value, existingImageUrl, onC
   return <div className="field image-upload-field">
     <label htmlFor={`image-${kind}-${caseId ?? 'new'}`}>{label}</label>
     <input id={`image-${kind}-${caseId ?? 'new'}`} type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void upload(event)} disabled={busy} />
-    <span className="field-hint">JPEG, PNG, or WebP · up to 8 MB. Images are stored privately and shared only with the people authorized to view this case.</span>
-    {busy ? <p role="status" className="status-message">Uploading securely…</p> : null}
+    <span className="field-hint">JPEG, PNG, or WebP - up to 8 MB. Images are stored privately and shared only with the people authorized to view this case.</span>
+    {busy ? <p role="status" className="status-message">Uploading securely...</p> : null}
     {error ? <p role="alert" className="status-message error">{error}</p> : null}
     {value && (preview || existingImageUrl) ? <div className="image-upload-preview"><img src={preview || existingImageUrl} alt="Selected image preview" /><span>Image ready</span><button type="button" className="text-link" onClick={() => { onChange(''); setPreview((current) => { if (current) URL.revokeObjectURL(current); return ''; }); }}>Remove image</button></div> : null}
   </div>;

@@ -147,7 +147,7 @@ export default function AdminWorkspace() {
 
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
 
-    {loading ? <div className="empty-state"><p>Loading administrator console…</p></div> : null}
+    {loading ? <div className="empty-state"><p>Loading administrator console...</p></div> : null}
 
     {!loading && metrics ? <>
       <div className="stats-grid">
@@ -199,7 +199,7 @@ export default function AdminWorkspace() {
                         });
                       }}
                     >
-                      {updatingUserId === user.id ? 'Saving…' : hasReviewer ? 'Remove reviewer access' : 'Grant reviewer access'}
+                      {updatingUserId === user.id ? 'Saving...' : hasReviewer ? 'Remove reviewer access' : 'Grant reviewer access'}
                     </button>
                   </td>
                 </tr>;
@@ -230,7 +230,7 @@ export default function AdminWorkspace() {
                 <td>{new Date(entry.createdAt).toLocaleString()}</td>
                 <td>{entry.action}</td>
                 <td>{entry.actorId === 'operator-cli' ? 'Operator CLI' : entry.actorId}</td>
-                <td>{entry.entityType} / {entry.entityId}{entry.email ? ` · ${entry.email}` : ''}</td>
+                <td>{entry.entityType} / {entry.entityId}{entry.email ? ` - ${entry.email}` : ''}</td>
               </tr>)}
             </tbody>
           </table>

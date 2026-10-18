@@ -11,7 +11,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: 'REUNITE | Report. Find. Reunite.',
-  description: 'Ghana’s citizen-powered missing persons reporting platform.'
+  description: 'Ghana's citizen-powered missing persons reporting platform.'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
             <div className="topbar-actions">
               <Link href="/auth/login" className="secondary-button family-login">
-                Family login <span aria-hidden="true">→</span>
+                Family login
               </Link>
             </div>
           </header>

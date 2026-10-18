@@ -163,7 +163,7 @@ export default function SightingForm({ caseId }: { caseId: string }) {
       <div className="sighting-submit-row">
         <p>Every sighting goes to the family for approval before it can appear publicly.</p>
         <button type="submit" className="primary-button" disabled={busy}>
-          {busy ? 'Sending sighting…' : 'Send sighting'}
+          {busy ? 'Sending sighting...' : 'Send sighting'}
         </button>
       </div>
 

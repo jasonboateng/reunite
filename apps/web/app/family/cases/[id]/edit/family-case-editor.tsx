@@ -64,23 +64,23 @@ export default function FamilyCaseEditor({ caseId }: { caseId: string }) {
   }
 
   return <div className="module-page family-case-edit-page">
-    <Link href="/family/dashboard" className="back-link">← Your cases</Link>
+    <Link href="/family/dashboard" className="back-link"> Your cases</Link>
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {notice ? <p className="status-message" role="status">{notice}</p> : null}
-    {loading ? <div className="empty-state">Loading case details…</div> : null}
+    {loading ? <div className="empty-state">Loading case details...</div> : null}
     {caseInfo ? <>
-      <div className="page-header"><div><p className="eyebrow">CASE MANAGEMENT</p><h1>{caseInfo.status === 'Found' ? 'Case closed' : 'Update case details'}</h1><p>{caseInfo.caseNumber} · {caseInfo.name}</p></div></div>
+      <div className="page-header"><div><p className="eyebrow">CASE MANAGEMENT</p><h1>{caseInfo.status === 'Found' ? 'Case closed' : 'Update case details'}</h1><p>{caseInfo.caseNumber} - {caseInfo.name}</p></div></div>
       {caseInfo.status === 'Found' ? <div className="prototype-banner"><strong>Marked found</strong><span>This case is private and closed. New public sightings are disabled.</span></div> : <>
         <div className="prototype-banner"><strong>Updates need a fresh review</strong><span>Saving changes removes a published case from public search and withdraws its prior publication request. You can select public details and request publication again afterward.</span></div>
         <form className="panel-card family-case-edit-form" onSubmit={(event) => void save(event)}>
-          <div className="field"><label htmlFor="case-name">Person’s name</label><input id="case-name" name="name" required maxLength={120} defaultValue={caseInfo.name} /></div>
-          <div className="field"><label htmlFor="case-age">Age</label><input id="case-age" name="age" required maxLength={3} defaultValue={caseInfo.age} /><small>Enter an age from 0 to 120, or “Unknown”.</small></div>
+          <div className="field"><label htmlFor="case-name">Person's name</label><input id="case-name" name="name" required maxLength={120} defaultValue={caseInfo.name} /></div>
+          <div className="field"><label htmlFor="case-age">Age</label><input id="case-age" name="age" required maxLength={3} defaultValue={caseInfo.age} /><small>Enter an age from 0 to 120, or "Unknown".</small></div>
           <div className="field"><label htmlFor="case-region">Region</label><input id="case-region" name="region" required maxLength={100} defaultValue={caseInfo.region} /></div>
           <div className="field"><label htmlFor="case-last-seen">Last seen details</label><input id="case-last-seen" name="lastSeen" required maxLength={200} defaultValue={caseInfo.lastSeen} /></div>
           <div className="field"><label htmlFor="case-description">Private report notes</label><textarea id="case-description" name="description" required minLength={10} maxLength={5000} defaultValue={caseInfo.description} /></div>
           <div className="field"><label htmlFor="case-contact">Family contact</label><input id="case-contact" name="contact" required maxLength={100} defaultValue={caseInfo.contact} /></div>
           <ImageUpload kind="case-photo" caseId={caseId} value={imageAssetId} existingImageUrl={caseInfo.imageAssetId ? `${API_BASE_URL}/api/media/${encodeURIComponent(caseInfo.imageAssetId)}` : undefined} onChange={setImageAssetId} />
-          <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Save case details'}</button>
+          <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save case details'}</button>
         </form>
         <section className="case-close-section"><div><p className="eyebrow">RESOLUTION</p><h2>Person has been found?</h2><p>Marking the case found removes it from public search and closes new sighting submissions.</p></div><button className="case-close-button" type="button" onClick={() => void markFound()} disabled={busy}>Mark as found</button></section>
       </>}

@@ -787,11 +787,6 @@ button {
   letter-spacing: -0.04em;
 }
 
-.case-card-arrow {
-  color: var(--primary);
-  font-size: 1.4rem;
-}
-
 .public-case-card-copy p {
   margin: 6px 0;
   color: var(--muted);

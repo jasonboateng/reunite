@@ -157,7 +157,7 @@ async function sendTextEmail(to: string, subjectText: string, text: string): Pro
 export async function sendModeratorInvitationEmail(input: MailInput): Promise<boolean> {
   return sendTextEmail(
     input.to,
-    `REUNITE moderator invitation · ${input.caseNumber}`,
+    `REUNITE moderator invitation - ${input.caseNumber}`,
     `You have been invited to moderate REUNITE case ${input.caseNumber}.\n\nAccept this case-specific invitation:\n${input.inviteUrl}\n\nThe link expires ${input.expiresAt.toUTCString()} and can be used once. If you were not expecting this invitation, you can ignore this email.`
   );
 }
@@ -167,7 +167,7 @@ export async function sendFamilyNotificationEmail(input: { to: string; caseNumbe
   const next = encodeURIComponent('/family/notifications');
   return sendTextEmail(
     input.to,
-    `REUNITE case update · ${input.caseNumber}`,
+    `REUNITE case update - ${input.caseNumber}`,
     `There is a new private update for REUNITE case ${input.caseNumber}.\n\nSign in to your family account to review it: ${origin.replace(/\/$/, '')}/auth/login?next=${next}\n\nThis email does not contain private case details. If you were not expecting this update, sign in and check your account activity.`
   );
 }

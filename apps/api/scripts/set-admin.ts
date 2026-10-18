@@ -42,7 +42,7 @@ async function main() {
     }
     const roles = revoke ? currentRoles.filter((role) => role !== 'admin') : Array.from(new Set([...currentRoles, 'admin' as const]));
     if (!roles.length) {
-      console.error('Administrator access cannot be the account’s only role.');
+      console.error('Administrator access cannot be the account's only role.');
       process.exitCode = 1;
       return;
     }
@@ -50,7 +50,7 @@ async function main() {
     const roleFilter = user.roles ? { roles: user.roles } : { role: user.role, roles: { $exists: false } };
     const saved = await users.updateOne({ id: user.id, ...roleFilter }, { $set: { role, roles } });
     if (saved.modifiedCount !== 1) {
-      console.error('This account’s roles changed while you were updating them. Reload and try again.');
+      console.error('This account's roles changed while you were updating them. Reload and try again.');
       process.exitCode = 1;
       return;
     }

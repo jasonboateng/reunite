@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         A submitted sighting is sent to the family for review. Its location is not automatically
         published. Share only information you believe is safe and useful.
       </p>
-      <Link href="/" className="text-link">Return to case search →</Link>
+      <Link href="/" className="text-link">Return to case search </Link>
     </section>
   );
 }

@@ -14,7 +14,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
 
   return (
     <div className="module-page case-detail-page">
-      <Link href="/cases" className="back-link">← Back to public cases</Link>
+      <Link href="/cases" className="back-link"> Back to public cases</Link>
 
       <section className="case-detail-heading">
         <div>
@@ -22,7 +22,7 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
           <span className="case-card-id">{caseItem.id}</span>
           <h1>{caseItem.name}</h1>
           <p className="case-detail-subtitle">
-            {[caseItem.age ? `${caseItem.age} years old` : null, caseItem.region].filter(Boolean).join(' · ')}
+            {[caseItem.age ? `${caseItem.age} years old` : null, caseItem.region].filter(Boolean).join(' - ')}
           </p>
           <span className={`status-badge ${caseItem.status.toLowerCase() === 'urgent' ? 'urgent' : 'active'}`}>
             {caseItem.status === 'Urgent' ? 'Urgent search' : 'Open case'}

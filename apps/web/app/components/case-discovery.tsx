@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -58,7 +58,7 @@ export default function CaseDiscovery({
         </form>
         <p className="search-help">Only reports approved for public viewing appear in search.</p>
         <p className="family-report-prompt">
-        Need to report someone missing? <Link href="/auth/register?next=%2Ffamily%2Fcases%2Fnew">Create a family report <span aria-hidden="true">â†’</span></Link>
+        Need to report someone missing? <Link href="/auth/register?next=%2Ffamily%2Fcases%2Fnew">Create a family report</Link>
         </p>
       </section>
 
@@ -100,9 +100,8 @@ export default function CaseDiscovery({
                       <span className="case-card-id">{caseItem.id}</span>
                       <h3>{caseItem.name}</h3>
                     </div>
-                    <span className="case-card-arrow" aria-hidden="true">â†—</span>
                   </div>
-                  {caseItem.age || caseItem.region ? <p>{caseItem.age ? `${caseItem.age} yrs` : null}{caseItem.age && caseItem.region ? <span aria-hidden="true"> · </span> : null}{caseItem.region}</p> : null}
+                  {caseItem.age || caseItem.region ? <p>{caseItem.age ? `${caseItem.age} yrs` : null}{caseItem.age && caseItem.region ? <span aria-hidden="true"> - </span> : null}{caseItem.region}</p> : null}
                   {caseItem.lastSeen ? <p className="case-card-last-seen">Last seen {caseItem.lastSeen}</p> : null}
                   <span className="case-card-action">View case and share a sighting</span>
                 </div>

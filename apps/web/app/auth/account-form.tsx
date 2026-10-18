@@ -49,7 +49,7 @@ export function AccountForm({ mode, nextPath }: { mode: 'login' | 'register'; ne
       {register && <div className="field"><label htmlFor="account-name">Your name</label><input id="account-name" autoComplete="name" maxLength={100} value={name} onChange={(event) => setName(event.target.value)} required /></div>}
       <div className="field"><label htmlFor="account-email">Email address</label><input id="account-email" type="email" autoComplete="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} required /></div>
       <div className="field"><label htmlFor="account-password">Password</label><input id="account-password" type="password" autoComplete={register ? 'new-password' : 'current-password'} minLength={register ? 12 : undefined} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} required /><span className="field-hint">{register ? 'Use at least 12 characters.' : 'Enter your account password.'}</span></div>
-      <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Please wait…' : register ? 'Create account' : 'Sign in'}</button>
+      <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Please wait...' : register ? 'Create account' : 'Sign in'}</button>
       {error && <p className="status-message error" role="alert">{error}</p>}
     </form>
     <p className="account-switch">{register ? 'Already registered?' : 'New to REUNITE?'} <Link href={register ? `/auth/login${link}` : `/auth/register${link}`}>{register ? 'Sign in' : 'Create an account'}</Link></p>

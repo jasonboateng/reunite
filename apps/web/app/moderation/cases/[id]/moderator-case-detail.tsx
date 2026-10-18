@@ -95,15 +95,15 @@ export default function ModeratorCaseDetail({ caseId }: { caseId: string }) {
   }
 
   const escalationActions = actions.filter((action) => action.type === 'case-escalation');
-  return <div className="module-page moderator-case-page"><Link href="/moderation" className="back-link">← Assigned cases</Link>
+  return <div className="module-page moderator-case-page"><Link href="/moderation" className="back-link"> Assigned cases</Link>
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {notice ? <p className="status-message" role="status">{notice}</p> : null}
     {caseInfo ? <>
-      <div className="page-header"><div><p className="eyebrow">ASSIGNED CASE · MODERATOR ACCESS</p><h1>{caseInfo.name}</h1><p>{caseInfo.caseNumber} · {caseInfo.region} · {caseInfo.status}</p></div></div>
+      <div className="page-header"><div><p className="eyebrow">ASSIGNED CASE - MODERATOR ACCESS</p><h1>{caseInfo.name}</h1><p>{caseInfo.caseNumber} - {caseInfo.region} - {caseInfo.status}</p></div></div>
       <section className="panel-card moderator-case-information"><div className="section-heading"><p className="eyebrow">CASE INFORMATION</p><h2>Family report details</h2></div>{caseInfo.imageAssetId ? <Image className="review-sighting-photo" src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseInfo.imageAssetId)}`} alt={`Private case photo of ${caseInfo.name}`} width={800} height={600} unoptimized /> : null}<div className="case-facts"><div><span>Age</span><strong>{caseInfo.age}</strong></div><div><span>Region</span><strong>{caseInfo.region}</strong></div><div><span>Last seen</span><strong>{caseInfo.lastSeen}</strong></div></div><p className="case-description">{caseInfo.description}</p></section>
       <section className="panel-card case-publication-review"><div className="section-heading"><p className="eyebrow">FAMILY CONSENT</p><h2>Public profile review</h2></div>
-        {caseInfo.publicProfile?.requested ? <><p>The family requested publication of these details: {caseInfo.publicProfile.fields.join(', ')}.</p>{caseInfo.publicProfile.fields.includes('summary') ? <p className="case-description">{caseInfo.publicProfile.summary}</p> : null}<p>Current visibility: <strong>{caseInfo.visibility ?? 'private'}</strong> · Case status: <strong>{caseInfo.status}</strong></p>
-          <button className="primary-button" type="button" onClick={() => void publishCase()} disabled={busy === 'publication' || (caseInfo.visibility === 'public' && caseInfo.status === 'Active') || caseInfo.status === 'Urgent'}>{busy === 'publication' ? 'Publishing…' : caseInfo.visibility === 'public' && caseInfo.status === 'Active' ? 'Published' : 'Verify and publish selected details'}</button>
+        {caseInfo.publicProfile?.requested ? <><p>The family requested publication of these details: {caseInfo.publicProfile.fields.join(', ')}.</p>{caseInfo.publicProfile.fields.includes('summary') ? <p className="case-description">{caseInfo.publicProfile.summary}</p> : null}<p>Current visibility: <strong>{caseInfo.visibility ?? 'private'}</strong> - Case status: <strong>{caseInfo.status}</strong></p>
+          <button className="primary-button" type="button" onClick={() => void publishCase()} disabled={busy === 'publication' || (caseInfo.visibility === 'public' && caseInfo.status === 'Active') || caseInfo.status === 'Urgent'}>{busy === 'publication' ? 'Publishing...' : caseInfo.visibility === 'public' && caseInfo.status === 'Active' ? 'Published' : 'Verify and publish selected details'}</button>
         </> : <p>The family has not requested public publication. You can review the private report while it remains visible only to its owner and assigned moderators.</p>}
       </section>
       <div className="prototype-banner" role="note"><strong>Moderator decisions are private assessments.</strong><span>They do not approve, reject, or publish sightings. The family retains those decisions.</span></div>
@@ -112,7 +112,7 @@ export default function ModeratorCaseDetail({ caseId }: { caseId: string }) {
         <form className="panel-card moderator-action-form" onSubmit={submitEscalation}>
           <div className="field"><label htmlFor="escalation-severity">Severity</label><select id="escalation-severity" name="severity"><option value="high">High</option><option value="urgent">Urgent</option></select></div>
           <div className="field"><label htmlFor="escalation-note">Reason and recommended follow-up</label><textarea id="escalation-note" name="note" minLength={10} maxLength={1200} required placeholder="Record the concern and the action you recommend." /></div>
-          <button className="primary-button" type="submit" disabled={busy === 'escalation'}>{busy === 'escalation' ? 'Saving…' : 'Record escalation'}</button>
+          <button className="primary-button" type="submit" disabled={busy === 'escalation'}>{busy === 'escalation' ? 'Saving...' : 'Record escalation'}</button>
         </form>
         {escalationActions.length ? <div className="moderator-action-history">{escalationActions.map((action) => <article key={action.id}><span className="status-badge urgent">{action.severity} escalation</span><p>{action.note}</p><small>{new Date(action.createdAt).toLocaleString()}</small></article>)}</div> : null}
       </section>
@@ -124,16 +124,16 @@ export default function ModeratorCaseDetail({ caseId }: { caseId: string }) {
             <div className="sighting-review-top"><span className="case-badge">{sighting.id}</span><span className="status-badge review">Family status: {sighting.status}</span></div>
             <p className="review-observation">{sighting.description}</p>
             {sighting.imageAssetId ? <Image className="review-sighting-photo" src={`${API_BASE_URL}/api/media/${encodeURIComponent(sighting.imageAssetId)}`} alt="Sighting evidence photo" width={800} height={450} unoptimized /> : null}
-            <dl className="sighting-review-facts"><div><dt>Observed</dt><dd>{new Date(sighting.observedAt).toLocaleString()}</dd></div><div><dt>Place</dt><dd>{sighting.location}</dd></div><div><dt>Coordinates · assigned case</dt><dd>{sighting.latitude.toFixed(5)}, {sighting.longitude.toFixed(5)}</dd></div><div><dt>Family visibility</dt><dd>{sighting.public ? 'Public' : 'Private'}</dd></div></dl>
+            <dl className="sighting-review-facts"><div><dt>Observed</dt><dd>{new Date(sighting.observedAt).toLocaleString()}</dd></div><div><dt>Place</dt><dd>{sighting.location}</dd></div><div><dt>Coordinates - assigned case</dt><dd>{sighting.latitude.toFixed(5)}, {sighting.longitude.toFixed(5)}</dd></div><div><dt>Family visibility</dt><dd>{sighting.public ? 'Public' : 'Private'}</dd></div></dl>
             {latestAssessment ? <div className="latest-assessment"><strong>Latest assessment: {latestAssessment.assessment?.replaceAll('-', ' ')}</strong><p>{latestAssessment.note}</p><small>{new Date(latestAssessment.createdAt).toLocaleString()}</small></div> : null}
             <form className="moderator-action-form inline-review-form" onSubmit={(event) => void submitAssessment(event, sighting.id)}>
               <div className="field"><label htmlFor={`assessment-${sighting.id}`}>Assessment</label><select id={`assessment-${sighting.id}`} name="assessment"><option value="credible-lead">Credible lead</option><option value="inconclusive">Inconclusive</option><option value="requires-follow-up">Requires follow-up</option></select></div>
               <div className="field"><label htmlFor={`note-${sighting.id}`}>Private review note</label><textarea id={`note-${sighting.id}`} name="note" minLength={10} maxLength={1200} required placeholder="Explain the assessment for the family and moderation record." /></div>
-              <button className="secondary-button" type="submit" disabled={busy === sighting.id}>{busy === sighting.id ? 'Saving…' : 'Save private assessment'}</button>
+              <button className="secondary-button" type="submit" disabled={busy === sighting.id}>{busy === sighting.id ? 'Saving...' : 'Save private assessment'}</button>
             </form>
           </article>;
         })}</div> : <div className="empty-state"><h3>No sightings have been submitted</h3><p>Citizen sightings for this case will appear here for moderator assessment.</p></div>}
       </section>
-    </> : !error ? <div className="empty-state"><p>Loading assigned case…</p></div> : null}
+    </> : !error ? <div className="empty-state"><p>Loading assigned case...</p></div> : null}
   </div>;
 }

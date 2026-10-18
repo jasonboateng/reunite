@@ -254,7 +254,7 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
     const foundCase = await cases.findOne({ id, ownerId: user.id });
     if (!foundCase) return reply.code(404).send({ error: 'This family case was not found.' });
     if (body.requestPublication && foundCase.status === 'Found') return reply.code(409).send({ error: 'A found case cannot be published.' });
-    if (body.requestPublication && !body.fields.includes('name')) return reply.code(400).send({ error: 'Select the person’s name before requesting publication.' });
+    if (body.requestPublication && !body.fields.includes('name')) return reply.code(400).send({ error: 'Select the person's name before requesting publication.' });
     if (body.fields.includes('photo') && !foundCase.imageAssetId) return reply.code(400).send({ error: 'Upload a case photo before including it in the public profile.' });
     if (body.fields.includes('summary') && body.summary.trim().length < 10) return reply.code(400).send({ error: 'Add at least 10 characters to the summary or leave it off the public profile.' });
 
@@ -295,7 +295,7 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
     }
     const foundCase = await cases.findOne({ id, ownerId: user.id });
     if (!foundCase) return reply.code(404).send({ error: 'This family case was not found.' });
-    if (!body.fields.includes('name')) return reply.code(400).send({ error: 'A flyer must include the missing person’s name.' });
+    if (!body.fields.includes('name')) return reply.code(400).send({ error: 'A flyer must include the missing person's name.' });
     if (body.fields.includes('summary') && body.summary.trim().length < 10) {
       return reply.code(400).send({ error: 'Add at least 10 characters to the summary or leave it off the flyer.' });
     }

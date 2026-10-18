@@ -100,21 +100,21 @@ export default function ModeratorManager({ caseId }: { caseId: string }) {
   }
 
   return <div className="module-page moderator-manager-page">
-    <Link href="/family/dashboard" className="back-link">← Family dashboard</Link>
-    <div className="page-header"><div><p className="eyebrow">FAMILY CASE · MODERATORS</p><h1>Manage case access</h1><p>{caseInfo ? `${caseInfo.name} · ${caseInfo.caseNumber}` : caseId}</p></div></div>
-    <div className="prototype-banner" role="note"><strong>Access is limited to this case.</strong><span>Invited moderators can view assigned case information. The invitation expires after 7 days. You can revoke pending invitations or remove an accepted moderator’s access at any time.</span></div>
+    <Link href="/family/dashboard" className="back-link"> Family dashboard</Link>
+    <div className="page-header"><div><p className="eyebrow">FAMILY CASE - MODERATORS</p><h1>Manage case access</h1><p>{caseInfo ? `${caseInfo.name} - ${caseInfo.caseNumber}` : caseId}</p></div></div>
+    <div className="prototype-banner" role="note"><strong>Access is limited to this case.</strong><span>Invited moderators can view assigned case information. The invitation expires after 7 days. You can revoke pending invitations or remove an accepted moderator's access at any time.</span></div>
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {notice ? <p className="status-message" role="status">{notice}</p> : null}
 
     <form className="form-panel moderator-invite-form" onSubmit={invite}>
       <div className="section-heading"><p className="eyebrow">ADD A MODERATOR</p><h2>Invite by email</h2></div>
       <div className="field"><label htmlFor="moderator-email">Moderator email address</label><input id="moderator-email" type="email" autoComplete="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} required /></div>
-      <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Working…' : 'Create invitation'}</button>
+      <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Working...' : 'Create invitation'}</button>
       {inviteUrl ? <div className="invite-link-panel"><label htmlFor="invite-link">One-time invitation link</label><div><input id="invite-link" readOnly value={inviteUrl} onFocus={(event) => event.currentTarget.select()} /><button type="button" className="secondary-button" onClick={() => void copyLink()}>Copy link</button></div><p>This link grants access to this case after the recipient accepts it. It can be used once and expires in 7 days.</p></div> : null}
     </form>
 
     <section className="moderator-list-section"><div className="section-heading"><p className="eyebrow">CASE ACCESS</p><h2>Invitations and moderators</h2></div>
-      {loading ? <div className="empty-state"><p>Loading case access…</p></div> : items.length ? <div className="table-shell"><table><thead><tr><th>Email</th><th>Status</th><th>Invited</th><th>Action</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td>{item.email}</td><td><span className={`status-badge ${item.status === 'accepted' ? 'active' : item.status === 'pending' ? 'review' : 'urgent'}`}>{item.status}</span></td><td>{new Date(item.createdAt).toLocaleDateString()}</td><td>{item.status === 'pending' || item.status === 'accepted' ? <button type="button" className="invite-revoke-button" disabled={busy} onClick={() => void revoke(item.id)}>{item.status === 'accepted' ? 'Remove access' : 'Revoke invite'}</button> : item.acceptedAt ? `Accepted ${new Date(item.acceptedAt).toLocaleDateString()}` : '—'}</td></tr>)}</tbody></table></div> : <div className="empty-state"><h3>No moderators assigned</h3><p>Create an invitation for someone to support this case.</p></div>}
+      {loading ? <div className="empty-state"><p>Loading case access...</p></div> : items.length ? <div className="table-shell"><table><thead><tr><th>Email</th><th>Status</th><th>Invited</th><th>Action</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td>{item.email}</td><td><span className={`status-badge ${item.status === 'accepted' ? 'active' : item.status === 'pending' ? 'review' : 'urgent'}`}>{item.status}</span></td><td>{new Date(item.createdAt).toLocaleDateString()}</td><td>{item.status === 'pending' || item.status === 'accepted' ? <button type="button" className="invite-revoke-button" disabled={busy} onClick={() => void revoke(item.id)}>{item.status === 'accepted' ? 'Remove access' : 'Revoke invite'}</button> : item.acceptedAt ? `Accepted ${new Date(item.acceptedAt).toLocaleDateString()}` : '-'}</td></tr>)}</tbody></table></div> : <div className="empty-state"><h3>No moderators assigned</h3><p>Create an invitation for someone to support this case.</p></div>}
     </section>
   </div>;
 }

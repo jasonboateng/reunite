@@ -8,7 +8,7 @@ import { API_BASE_URL } from '../../../../lib/api';
 type FlyerField = 'name' | 'age' | 'region' | 'lastSeen' | 'summary' | 'contact';
 type FlyerCase = { id: string; caseNumber: string; name: string; age: string; region: string; lastSeen: string; description: string; contact: string; imageAssetId?: string; flyerProfile?: { fields: FlyerField[]; summary: string } };
 const fieldOptions: { id: FlyerField; label: string; note: string }[] = [
-  { id: 'name', label: 'Person’s name', note: 'Required on every flyer' },
+  { id: 'name', label: 'Person's name', note: 'Required on every flyer' },
   { id: 'age', label: 'Age', note: 'Shown only when selected' },
   { id: 'region', label: 'Region', note: 'Shown only when selected' },
   { id: 'lastSeen', label: 'Last seen details', note: 'Shown only when selected' },
@@ -89,15 +89,15 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
     }
   }
 
-  if (loading) return <div className="module-page"><div className="empty-state"><p>Loading flyer details…</p></div></div>;
+  if (loading) return <div className="module-page"><div className="empty-state"><p>Loading flyer details...</p></div></div>;
   if (!caseItem) return <div className="module-page"><div className="empty-state"><h2>Flyer unavailable</h2><p>{error || 'This case could not be loaded.'}</p><Link className="text-link" href="/family/dashboard">Back to dashboard</Link></div></div>;
 
   const caseUrl = `${siteOrigin}/cases/${encodeURIComponent(caseItem.id)}`;
   const initials = caseItem.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
 
   return <div className="module-page flyer-builder-page">
-    <Link href="/family/dashboard" className="back-link">← Family dashboard</Link>
-    <div className="page-header"><div><p className="eyebrow">FAMILY CASE · FLYER</p><h1>Build a case flyer</h1><p>Choose what to print and check the preview before sharing.</p></div></div>
+    <Link href="/family/dashboard" className="back-link"> Family dashboard</Link>
+    <div className="page-header"><div><p className="eyebrow">FAMILY CASE - FLYER</p><h1>Build a case flyer</h1><p>Choose what to print and check the preview before sharing.</p></div></div>
     <div className="prototype-banner" role="note"><strong>This flyer is private until you print or share it.</strong><span>Only the details selected below appear on the flyer. Saving these choices does not publish the case to public search.</span></div>
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {notice ? <p className="status-message" role="status">{notice}</p> : null}
@@ -112,12 +112,12 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
         {selected.has('summary') ? <div className="field flyer-summary-field"><label htmlFor="flyer-summary">Public-safe summary</label><textarea id="flyer-summary" maxLength={1000} minLength={10} value={summary} onChange={(event) => { setSummary(event.target.value); setDirty(true); }} placeholder="Describe identifying clothing or other helpful details. Leave out private medical or family information." /><span className="field-hint">{summary.length}/1,000 characters. This text will be printed.</span></div> : null}
         {selected.has('contact') ? <div className="flyer-contact-preview"><strong>Contact shown on flyer</strong><span>{caseItem.contact}</span></div> : null}
         <p className="flyer-privacy-note">A phone number can be copied or photographed by anyone who sees this flyer. Include it only if you are comfortable sharing it widely.</p>
-        <div className="form-actions"><button className="secondary-button" type="button" onClick={() => window.print()} disabled={!selected.has('name')}>Print / Save as PDF</button><button className="primary-button" type="button" onClick={() => void save()} disabled={saving || !dirty}>{saving ? 'Saving…' : dirty ? 'Save flyer choices' : 'Choices saved'}</button></div>
+        <div className="form-actions"><button className="secondary-button" type="button" onClick={() => window.print()} disabled={!selected.has('name')}>Print / Save as PDF</button><button className="primary-button" type="button" onClick={() => void save()} disabled={saving || !dirty}>{saving ? 'Saving...' : dirty ? 'Save flyer choices' : 'Choices saved'}</button></div>
       </section>
 
       <section className="flyer-preview-wrap" aria-label="Flyer preview">
         <article className="missing-person-flyer">
-          <header className="flyer-brand"><span className="flyer-brand-mark">R</span><span>REUNITE <small>REPORT · FIND · REUNITE</small></span></header>
+          <header className="flyer-brand"><span className="flyer-brand-mark">R</span><span>REUNITE <small>REPORT - FIND - REUNITE</small></span></header>
           <p className="flyer-alert-label">MISSING PERSON</p>
           <div className="flyer-portrait">{caseItem.imageAssetId ? <img src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseItem.imageAssetId)}`} alt={`Photo of ${caseItem.name}`} /> : <span aria-hidden="true">{initials || 'R'}</span>}</div>
           {selected.has('name') ? <h2>{caseItem.name}</h2> : null}

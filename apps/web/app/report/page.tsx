@@ -97,7 +97,7 @@ export default function ReportPage() {
       </div>
 
       <p className="prototype-note">Reports are saved privately under your family account. They will not appear in public search until approved.</p>
-      {checkingAccount ? <div className="empty-state"><p>Checking your family account…</p></div> : null}
+      {checkingAccount ? <div className="empty-state"><p>Checking your family account...</p></div> : null}
 
       {!checkingAccount ? <form onSubmit={handleSubmit}>
         <div className="form-grid">

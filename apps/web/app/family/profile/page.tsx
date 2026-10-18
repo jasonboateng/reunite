@@ -38,13 +38,13 @@ export default function FamilyProfilePage() {
   };
 
   return <div className="module-page">
-    <Link href="/family/dashboard" className="back-link">← Your cases</Link>
+    <Link href="/family/dashboard" className="back-link"> Your cases</Link>
     <div className="page-header"><div><p className="eyebrow">ACCOUNT</p><h1>Your profile</h1><p>Account details used for your family reports and notifications.</p></div></div>
     {error ? <div className="inline-alert" role="alert">{error}</div> : null}
     {account ? <section className="panel-card"><dl className="account-details">
       <div><dt>Name</dt><dd>{account.name}</dd></div>
       <div><dt>Email</dt><dd>{account.email}</dd></div>
       <div><dt>Account type</dt><dd>{account.role === 'family' ? 'Family reporter' : account.role}</dd></div>
-    </dl><button className="secondary-button" type="button" disabled={signingOut} onClick={() => void signOut()}>{signingOut ? 'Signing out…' : 'Sign out'}</button></section> : !error ? <div className="empty-state">Loading your profile…</div> : null}
+    </dl><button className="secondary-button" type="button" disabled={signingOut} onClick={() => void signOut()}>{signingOut ? 'Signing out...' : 'Sign out'}</button></section> : !error ? <div className="empty-state">Loading your profile...</div> : null}
   </div>;
 }

@@ -50,15 +50,15 @@ export default function InvitationAcceptance({ token }: { token: string }) {
   }
 
   return <section className="module-page family-login-page invitation-accept-page">
-    <p className="eyebrow">REUNITE · MODERATOR INVITATION</p>
+    <p className="eyebrow">REUNITE - MODERATOR INVITATION</p>
     <h1>Join a case review team</h1>
-    {loading ? <p>Checking invitation…</p> : invitation ? <>
+    {loading ? <p>Checking invitation...</p> : invitation ? <>
       <p>You have been invited to support <strong>{invitation.personName}</strong> ({invitation.caseNumber}) as a moderator.</p>
       <div className="panel-card account-status"><strong>Invitation for {invitation.email}</strong><span>This grants access to this case only. Invitation expires {new Date(invitation.expiresAt).toLocaleString()}.</span></div>
       <form className="form-panel family-auth-form" onSubmit={accept}>
         <div className="field"><label htmlFor="invite-name">Your name <span className="field-hint">Enter this if you are creating a new REUNITE account</span></label><input id="invite-name" autoComplete="name" maxLength={100} value={name} onChange={(event) => setName(event.target.value)} /></div>
         <div className="field"><label htmlFor="invite-password">Create a password or enter your current account password</label><input id="invite-password" type="password" autoComplete="new-password" minLength={12} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} required /><span className="field-hint">At least 12 characters. If you already have an account, enter its current password.</span></div>
-        <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Accepting invitation…' : 'Accept and open assigned cases'}</button>
+        <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Accepting invitation...' : 'Accept and open assigned cases'}</button>
       </form>
     </> : <div className="empty-state"><h2>Invitation unavailable</h2><p>{error}</p></div>}
     {error && invitation ? <p className="status-message error" role="alert">{error}</p> : null}
