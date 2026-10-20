@@ -117,8 +117,25 @@ const mediaRoutes: FastifyPluginAsync<MediaOptions> = async (fastify, { db }) =>
         : null;
     if (!caseItem) return reply.code(404).send({ error: 'This image was not found.' });
 
-    const publicCase = caseItem.visibility === 'public' && caseItem.status === 'Active'
+    const activePublicCase = caseItem.visibility === 'public' && caseItem.status === 'Active'
       && caseItem.publicProfile?.requested === true && caseItem.publicProfile?.fields?.includes('name');
+    let foundPublicCase = caseItem.status === 'Found'
+      && caseItem.publicProfile?.fields?.includes('name')
+      && caseItem.visibility === 'public' && caseItem.publicProfile?.requested === true;
+    if (caseItem.status === 'Found' && !foundPublicCase && caseItem.publicProfile?.fields?.includes('name')) {
+      const markedFound = await db.collection('auditLogs').findOne(
+        { action: 'case.marked-found', entityId: caseItem.id, 'before.visibility': 'public' },
+        { sort: { createdAt: -1 }, projection: { _id: 0, createdAt: 1 } }
+      );
+      if (markedFound) {
+        const laterWithdrawal = await db.collection('auditLogs').findOne({
+          action: 'case.publication-consent-withdrawn', entityId: caseItem.id,
+          createdAt: { $gt: markedFound.createdAt }
+        }, { projection: { _id: 1 } });
+        foundPublicCase = !laterWithdrawal;
+      }
+    }
+    const publicCase = activePublicCase || foundPublicCase;
     const familyOwns = user && user.id === caseItem.ownerId && (user.roles ?? [user.role]).includes('family');
     const moderatorAssigned = user && (user.roles ?? [user.role]).includes('moderator')
       ? Boolean(await db.collection('moderatorInvitations').findOne({ caseId: caseItem.id, moderatorId: user.id, status: 'accepted' }, { projection: { id: 1 } }))

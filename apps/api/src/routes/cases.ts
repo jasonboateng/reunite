@@ -13,6 +13,7 @@ type StoredCase = CaseRecord & {
   publicDescription?: string;
   flyerProfile?: { fields: string[]; summary: string };
   publicProfile?: { fields: string[]; summary: string; requested: boolean; requestedAt: string };
+  closedAt?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -27,7 +28,8 @@ function toPublicCase(caseItem: WithId<StoredCase>) {
     ...(fields.has('lastSeen') ? { lastSeen: caseItem.lastSeen } : {}),
     ...(fields.has('photo') && caseItem.imageAssetId ? { imageAssetId: caseItem.imageAssetId } : {}),
     status: caseItem.status,
-    description: fields.has('summary') ? caseItem.publicProfile?.summary ?? '' : ''
+    description: fields.has('summary') ? caseItem.publicProfile?.summary ?? '' : '',
+    ...(caseItem.status === 'Found' && caseItem.closedAt ? { foundAt: caseItem.closedAt } : {})
   };
 }
 
@@ -70,6 +72,27 @@ function isReportInput(body: unknown): body is ReportInput {
 const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) => {
   const cases = db.collection<StoredCase>('cases');
   const sightings = db.collection<SightingRecord & { createdAt: string }>('sightings');
+  const auditLogs = db.collection<{ action: string; entityId: string; createdAt: string; before?: { visibility?: string } }>('auditLogs');
+
+  async function wasPublicWhenMarkedFound(caseId: string) {
+    const markedFound = await auditLogs.findOne(
+      { action: 'case.marked-found', entityId: caseId, 'before.visibility': 'public' },
+      { sort: { createdAt: -1 }, projection: { _id: 0, createdAt: 1 } }
+    );
+    if (!markedFound) return false;
+    const laterWithdrawal = await auditLogs.findOne({
+      action: 'case.publication-consent-withdrawn', entityId: caseId,
+      createdAt: { $gt: markedFound.createdAt }
+    }, { projection: { _id: 1 } });
+    return !laterWithdrawal;
+  }
+
+  async function isPubliclyAvailable(caseItem: WithId<StoredCase>) {
+    if (!caseItem.publicProfile?.fields?.includes('name')) return false;
+    if ((caseItem.status === 'Active' || caseItem.status === 'Found')
+      && caseItem.visibility === 'public' && caseItem.publicProfile.requested === true) return true;
+    return caseItem.status === 'Found' && wasPublicWhenMarkedFound(caseItem.id);
+  }
 
   fastify.get('/api/health', async () => ({
     status: 'ok',
@@ -79,21 +102,26 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
   }));
 
   fastify.get('/api/cases', async () => {
-    const publicCases = await cases.find({ visibility: 'public', status: 'Active', 'publicProfile.requested': true, 'publicProfile.fields': 'name' }).sort({ createdAt: -1 }).toArray();
+    const activeCases = await cases.find({ visibility: 'public', status: 'Active', 'publicProfile.requested': true, 'publicProfile.fields': 'name' }).sort({ createdAt: -1 }).toArray();
+    const foundCandidates = await cases.find({ status: 'Found', 'publicProfile.fields': 'name' }).sort({ updatedAt: -1 }).toArray();
+    const foundCases = await Promise.all(foundCandidates.map(async (item) => await isPubliclyAvailable(item) ? item : null));
+    const publicCases = [...activeCases, ...foundCases.filter((item): item is WithId<StoredCase> => item !== null)]
+      .sort((left, right) => Date.parse(right.updatedAt || right.createdAt) - Date.parse(left.updatedAt || left.createdAt));
     return { total: publicCases.length, items: publicCases.map(toPublicCase) };
   });
 
   fastify.get('/api/cases/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
-    const foundCase = await cases.findOne({ id, visibility: 'public', status: 'Active', 'publicProfile.requested': true, 'publicProfile.fields': 'name' });
-    if (!foundCase) return reply.code(404).send({ error: 'This public case was not found.' });
+    const foundCase = await cases.findOne({ id, 'publicProfile.fields': 'name' });
+    if (!foundCase || !await isPubliclyAvailable(foundCase)) return reply.code(404).send({ error: 'This public case was not found.' });
     return toPublicCase(foundCase);
   });
 
   fastify.get('/api/cases/:id/sightings', async (request, reply) => {
     const { id } = request.params as { id: string };
-    const foundCase = await cases.findOne({ id, visibility: 'public', status: 'Active', 'publicProfile.requested': true, 'publicProfile.fields': 'name' }, { projection: { id: 1 } });
-    if (!foundCase) return reply.code(404).send({ error: 'This public case was not found.' });
+    const foundCase = await cases.findOne({ id, 'publicProfile.fields': 'name' });
+    if (!foundCase || !await isPubliclyAvailable(foundCase)) return reply.code(404).send({ error: 'This public case was not found.' });
+    if (foundCase.status === 'Found') return { total: 0, items: [] };
     const items = await sightings.find({ caseId: id, status: 'approved', public: true }, {
       projection: { _id: 0, id: 1, description: 1, observedAt: 1, location: 1, imageAssetId: 1 }
     }).sort({ submittedAt: -1 }).toArray();
@@ -202,18 +230,32 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
     if (!foundCase) return reply.code(404).send({ error: 'This family case was not found.' });
     if (foundCase.status === 'Found') return reply.code(409).send({ error: 'This case is already marked found.' });
     const now = new Date().toISOString();
+    const wasPublic = foundCase.visibility === 'public'
+      && foundCase.publicProfile?.requested === true
+      && foundCase.publicProfile.fields.includes('name');
+    const update: Record<string, unknown> = {
+      status: 'Found', visibility: wasPublic ? 'public' : 'private',
+      updatedAt: now, closedAt: now, closedBy: user.id,
+      resolutionNote: typeof body.note === 'string' ? body.note.trim() : '',
+      ...(!wasPublic ? { 'publicProfile.requested': false, 'publicProfile.requestedAt': '' } : {})
+    };
     const result = await cases.updateOne(
       { id, ownerId: user.id, status: foundCase.status },
-      { $set: { status: 'Found', visibility: 'private', 'publicProfile.requested': false, 'publicProfile.requestedAt': '', updatedAt: now, closedAt: now, closedBy: user.id, resolutionNote: typeof body.note === 'string' ? body.note.trim() : '' } }
+      { $set: update }
     );
     if (result.modifiedCount !== 1) return reply.code(409).send({ error: 'The case changed while you were closing it. Reload and try again.' });
     await db.collection('auditLogs').insertOne({
       id: randomUUID(), actorId: user.id, action: 'case.marked-found', entityType: 'case', entityId: id,
-      before: { status: foundCase.status, visibility: foundCase.visibility }, after: { status: 'Found', visibility: 'private' },
+      before: { status: foundCase.status, visibility: foundCase.visibility }, after: { status: 'Found', visibility: update.visibility },
       hasResolutionNote: typeof body.note === 'string' && body.note.trim().length > 0, createdAt: now
     });
-    request.log.info({ caseId: id, actorId: user.id }, 'Family marked case found and removed public visibility');
-    return { message: 'Case marked found. It is no longer publicly listed, and new public sightings are closed.', case: { id, status: 'Found', visibility: 'private', closedAt: now } };
+    request.log.info({ caseId: id, actorId: user.id, remainedPublic: wasPublic }, 'Family marked case found');
+    return {
+      message: wasPublic
+        ? 'Case marked found. Its family-approved public details remain visible for transparency, and new sightings are closed.'
+        : 'Case marked found. It remains private because it was not publicly shared, and new public sightings are closed.',
+      case: { id, status: 'Found', visibility: update.visibility, closedAt: now }
+    };
   });
 
   fastify.get('/api/family/cases/:id/flyer', async (request, reply) => {
@@ -270,7 +312,7 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
     if (changed) update.reviewState = 'pending';
     if (changed && foundCase.visibility === 'public') {
       update.visibility = 'private';
-      update.status = 'Review';
+      if (foundCase.status !== 'Found') update.status = 'Review';
     }
     await cases.updateOne({ id, ownerId: user.id }, { $set: update, ...(changed ? { $unset: { reviewNote: '' } } : {}) });
     if (changed) await db.collection('auditLogs').insertOne({
@@ -444,12 +486,18 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
       createdAt: now,
       updatedAt: now
     };
-    if (body.imageAssetId) {
-      const mediaAsset = await db.collection('mediaAssets').findOne({ id: body.imageAssetId, ownerId: user.id, kind: 'case-photo', uploadedAt: { $exists: true }, caseId: { $exists: false } });
-      if (!mediaAsset) return reply.code(400).send({ error: 'Upload a case photo to this account before submitting the report.' });
-      await db.collection('mediaAssets').updateOne({ id: mediaAsset.id, caseId: { $exists: false } }, { $set: { caseId: id } });
+    try {
+      if (body.imageAssetId) {
+        const mediaAsset = await db.collection('mediaAssets').findOne({ id: body.imageAssetId, ownerId: user.id, kind: 'case-photo', uploadedAt: { $exists: true }, caseId: { $exists: false } });
+        if (!mediaAsset) return reply.code(400).send({ error: 'Upload a case photo to this account before submitting the report.' });
+        const attached = await db.collection('mediaAssets').updateOne({ id: mediaAsset.id, caseId: { $exists: false } }, { $set: { caseId: id } });
+        if (attached.modifiedCount !== 1) return reply.code(409).send({ error: 'This photo is already attached to another case. Upload it again and retry.' });
+      }
+      await cases.insertOne(newCase);
+    } catch (error) {
+      request.log.error({ err: error, caseId: id, ownerId: user.id }, 'Family report could not be persisted');
+      throw error;
     }
-    await cases.insertOne(newCase);
 
     request.log.info({ caseId: id }, 'Private case report saved to MongoDB for review');
     return reply.code(201).send({

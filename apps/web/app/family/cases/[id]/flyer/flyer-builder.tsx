@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toBlob } from 'html-to-image';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '../../../../lib/api';
 
@@ -26,6 +27,8 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [siteOrigin, setSiteOrigin] = useState('');
+  const [savingImage, setSavingImage] = useState(false);
+  const flyerRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
   const load = useCallback(async () => {
@@ -89,6 +92,58 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
     }
   }
 
+  async function saveFlyerImage() {
+    const flyer = flyerRef.current;
+    if (!flyer) return;
+
+    setSavingImage(true);
+    setError('');
+    setNotice('');
+    try {
+      const blob = await toBlob(flyer, {
+        pixelRatio: 2,
+        cacheBust: true,
+        fetchRequestInit: { credentials: 'include' }
+      });
+      if (!blob) throw new Error('The flyer image could not be created.');
+
+      const safeCaseNumber = caseItem?.caseNumber.replace(/[^a-z0-9-]/gi, '-') || 'case';
+      const filename = `reunite-${safeCaseNumber}.png`;
+      const file = new File([blob], filename, { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ title: 'REUNITE case flyer', files: [file] });
+          setNotice('Choose Photos or Gallery in the share menu to save the flyer.');
+          return;
+        } catch (cause) {
+          if (cause instanceof Error && cause.name === 'AbortError') return;
+        }
+        downloadFlyer(blob, filename);
+        setNotice('Flyer downloaded. Open it and choose Photos or Gallery to save it.');
+      } else {
+        downloadFlyer(blob, filename);
+        setNotice('Flyer image downloaded.');
+      }
+    } catch (cause) {
+      if (cause instanceof Error && cause.name === 'AbortError') return;
+      setError(cause instanceof Error ? cause.message : 'Unable to save the flyer image.');
+    } finally {
+      setSavingImage(false);
+    }
+  }
+
+  function downloadFlyer(blob: Blob, filename: string) {
+    const imageUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(imageUrl), 1000);
+  }
+
   if (loading) return <div className="module-page"><div className="empty-state"><p>Loading flyer details...</p></div></div>;
   if (!caseItem) return <div className="module-page"><div className="empty-state"><h2>Flyer unavailable</h2><p>{error || 'This case could not be loaded.'}</p><Link className="text-link" href="/family/dashboard">Back to dashboard</Link></div></div>;
 
@@ -112,14 +167,15 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
         {selected.has('summary') ? <div className="field flyer-summary-field"><label htmlFor="flyer-summary">Public-safe summary</label><textarea id="flyer-summary" maxLength={1000} minLength={10} value={summary} onChange={(event) => { setSummary(event.target.value); setDirty(true); }} placeholder="Describe identifying clothing or other helpful details. Leave out private medical or family information." /><span className="field-hint">{summary.length}/1,000 characters. This text will be printed.</span></div> : null}
         {selected.has('contact') ? <div className="flyer-contact-preview"><strong>Contact shown on flyer</strong><span>{caseItem.contact}</span></div> : null}
         <p className="flyer-privacy-note">A phone number can be copied or photographed by anyone who sees this flyer. Include it only if you are comfortable sharing it widely.</p>
-        <div className="form-actions"><button className="secondary-button" type="button" onClick={() => window.print()} disabled={!selected.has('name')}>Print / Save as PDF</button><button className="primary-button" type="button" onClick={() => void save()} disabled={saving || !dirty}>{saving ? 'Saving...' : dirty ? 'Save flyer choices' : 'Choices saved'}</button></div>
+        <div className="form-actions"><button className="secondary-button" type="button" onClick={() => void saveFlyerImage()} disabled={savingImage || !selected.has('name')}>{savingImage ? 'Creating image...' : 'Save flyer image / gallery'}</button><button className="secondary-button" type="button" onClick={() => window.print()} disabled={!selected.has('name')}>Print / Save as PDF</button><button className="primary-button" type="button" onClick={() => void save()} disabled={saving || !dirty}>{saving ? 'Saving...' : dirty ? 'Save flyer choices' : 'Choices saved'}</button></div>
+        <p className="flyer-export-help">On phones, choose Photos or Gallery from the share menu. On computers, the PNG downloads.</p>
       </section>
 
       <section className="flyer-preview-wrap" aria-label="Flyer preview">
-        <article className="missing-person-flyer">
+        <article ref={flyerRef} className="missing-person-flyer">
           <header className="flyer-brand"><span className="flyer-brand-mark">R</span><span>REUNITE <small>REPORT - FIND - REUNITE</small></span></header>
           <p className="flyer-alert-label">MISSING PERSON</p>
-          <div className="flyer-portrait">{caseItem.imageAssetId ? <img src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseItem.imageAssetId)}`} alt={`Photo of ${caseItem.name}`} /> : <span aria-hidden="true">{initials || 'R'}</span>}</div>
+          <div className="flyer-portrait">{caseItem.imageAssetId ? <img crossOrigin="use-credentials" src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseItem.imageAssetId)}`} alt={`Photo of ${caseItem.name}`} /> : <span aria-hidden="true">{initials || 'R'}</span>}</div>
           {selected.has('name') ? <h2>{caseItem.name}</h2> : null}
           <div className="flyer-detail-list">
             {selected.has('age') && caseItem.age !== 'Unknown' ? <p><strong>Age</strong><span>{caseItem.age}</span></p> : null}

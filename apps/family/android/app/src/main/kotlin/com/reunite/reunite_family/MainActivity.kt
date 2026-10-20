@@ -1,0 +1,5 @@
+package com.reunite.reunite_family
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()

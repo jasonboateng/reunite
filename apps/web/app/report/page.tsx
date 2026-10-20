@@ -67,13 +67,22 @@ export default function ReportPage() {
         })
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data: { error?: string; message?: string } = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        // Vercel or the API host can return an HTML error page instead of JSON.
+      }
       if (!response.ok) {
         if (response.status === 401) {
           router.replace('/auth/login?next=%2Freport');
           return;
         }
-        throw new Error(data.error || 'Unable to submit report');
+        throw new Error(
+          data.error ||
+            `The report service could not save this report (HTTP ${response.status}). Please try again shortly.`
+        );
       }
 
       setMessage(data.message || 'Report submitted successfully.');

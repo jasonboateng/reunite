@@ -18,14 +18,14 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
 
       <section className="case-detail-heading">
         <div>
-          <p className="eyebrow">PUBLIC MISSING PERSON CASE</p>
+            <p className="eyebrow">{caseItem.status === 'Found' ? 'PUBLIC CASE RECORD' : 'PUBLIC MISSING PERSON CASE'}</p>
           <span className="case-card-id">{caseItem.id}</span>
           <h1>{caseItem.name}</h1>
           <p className="case-detail-subtitle">
             {[caseItem.age ? `${caseItem.age} years old` : null, caseItem.region].filter(Boolean).join(' - ')}
           </p>
-          <span className={`status-badge ${caseItem.status.toLowerCase() === 'urgent' ? 'urgent' : 'active'}`}>
-            {caseItem.status === 'Urgent' ? 'Urgent search' : 'Open case'}
+          <span className={`status-badge ${caseItem.status.toLowerCase() === 'found' ? 'found' : caseItem.status.toLowerCase() === 'urgent' ? 'urgent' : 'active'}`}>
+            {caseItem.status === 'Found' ? 'Found' : caseItem.status === 'Urgent' ? 'Urgent search' : 'Open case'}
           </span>
         </div>
         <div className="case-detail-photo-wrap">
@@ -64,6 +64,13 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
             </p>
           </section>
 
+          {caseItem.status === 'Found' ? <section className="panel-card found-case-notice" aria-live="polite">
+            <p className="eyebrow">CASE STATUS UPDATE</p>
+            <h2>This person has been reported found</h2>
+            <p>The family marked this case as found. The family-approved case details remain listed for transparency. New sightings are closed.</p>
+            {caseItem.foundAt ? <p className="found-case-date">Status updated {caseItem.foundAt.slice(0, 10)}</p> : null}
+          </section> : null}
+
           {publicSightings.length ? <section className="panel-card public-sightings" aria-labelledby="public-sightings-heading">
             <div className="section-heading"><p className="eyebrow">FAMILY-APPROVED UPDATES</p><h2 id="public-sightings-heading">Public sightings</h2></div>
             <div className="public-sighting-list">{publicSightings.map((sighting) => <article key={sighting.id}>
@@ -72,14 +79,14 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
             <p className="privacy-note">Exact coordinates and private family details are not included.</p>
           </section> : null}
 
-          <section className="panel-card sighting-panel" aria-labelledby="sighting-heading">
+          {caseItem.status !== 'Found' ? <section className="panel-card sighting-panel" aria-labelledby="sighting-heading">
             <div className="section-heading">
               <p className="eyebrow">HAVE YOU SEEN THEM?</p>
               <h2 id="sighting-heading">Share a sighting</h2>
               <p>Include when and where you saw them. The family reviews every sighting before it can be shared publicly.</p>
             </div>
             <SightingForm caseId={caseItem.id} />
-          </section>
+          </section> : null}
         </div>
 
         <aside className="case-detail-aside">
@@ -88,14 +95,14 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
             <h2>Share information, not risk.</h2>
             <p>Do not follow or confront anyone. If there is immediate danger, contact local emergency services first.</p>
           </section>
-          <section className="panel-card">
+          {caseItem.status !== 'Found' ? <section className="panel-card">
             <p className="eyebrow">HOW SIGHTINGS WORK</p>
             <ol className="sighting-steps">
               <li>Your sighting is sent privately to the family.</li>
               <li>The family can approve or reject it.</li>
               <li>Only sightings the family chooses to publish become visible on the case.</li>
             </ol>
-          </section>
+          </section> : null}
         </aside>
       </div>
     </div>

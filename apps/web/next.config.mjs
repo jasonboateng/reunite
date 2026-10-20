@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   async rewrites() {
-    const apiOrigin = process.env.API_PROXY_ORIGIN?.replace(/\/$/, '');
+    const apiOrigin = (process.env.API_PROXY_ORIGIN || process.env.NEXT_PUBLIC_API_BASE_URL)?.replace(/\/$/, '');
     if (!apiOrigin) return [];
 
     return [{

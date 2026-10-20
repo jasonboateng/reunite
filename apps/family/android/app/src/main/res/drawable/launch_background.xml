@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modify this file to customize your launch splash screen -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/reunite_splash_background" />
+    <item
+        android:drawable="@drawable/reunite_wordmark"
+        android:gravity="center"
+        android:height="76dp"
+        android:width="210dp" />
+</layer-list>

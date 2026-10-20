@@ -70,7 +70,7 @@ export default function FamilyCaseEditor({ caseId }: { caseId: string }) {
     {loading ? <div className="empty-state">Loading case details...</div> : null}
     {caseInfo ? <>
       <div className="page-header"><div><p className="eyebrow">CASE MANAGEMENT</p><h1>{caseInfo.status === 'Found' ? 'Case closed' : 'Update case details'}</h1><p>{caseInfo.caseNumber} - {caseInfo.name}</p></div></div>
-      {caseInfo.status === 'Found' ? <div className="prototype-banner"><strong>Marked found</strong><span>This case is private and closed. New public sightings are disabled.</span></div> : <>
+      {caseInfo.status === 'Found' ? <div className="prototype-banner"><strong>Marked found</strong><span>This case is closed. If it was already public, its family-approved details remain visible in search with a Found label. Private cases stay private.</span></div> : <>
         <div className="prototype-banner"><strong>Updates need a fresh review</strong><span>Saving changes removes a published case from public search and withdraws its prior publication request. You can select public details and request publication again afterward.</span></div>
         <form className="panel-card family-case-edit-form" onSubmit={(event) => void save(event)}>
           <div className="field"><label htmlFor="case-name">Person's name</label><input id="case-name" name="name" required maxLength={120} defaultValue={caseInfo.name} /></div>
@@ -82,7 +82,7 @@ export default function FamilyCaseEditor({ caseId }: { caseId: string }) {
           <ImageUpload kind="case-photo" caseId={caseId} value={imageAssetId} existingImageUrl={caseInfo.imageAssetId ? `${API_BASE_URL}/api/media/${encodeURIComponent(caseInfo.imageAssetId)}` : undefined} onChange={setImageAssetId} />
           <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save case details'}</button>
         </form>
-        <section className="case-close-section"><div><p className="eyebrow">RESOLUTION</p><h2>Person has been found?</h2><p>Marking the case found removes it from public search and closes new sighting submissions.</p></div><button className="case-close-button" type="button" onClick={() => void markFound()} disabled={busy}>Mark as found</button></section>
+        <section className="case-close-section"><div><p className="eyebrow">RESOLUTION</p><h2>Person has been found?</h2><p>Already-public cases stay visible with a Found label for transparency. Private reports stay private. New sightings close.</p></div><button className="case-close-button" type="button" onClick={() => void markFound()} disabled={busy}>Mark as found</button></section>
       </>}
     </> : null}
   </div>;

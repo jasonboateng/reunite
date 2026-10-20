@@ -1,17 +1,27 @@
 :root {
-  --bg: #f4f7fb;
+  --bg: #f4f7f8;
   --panel: #ffffff;
-  --panel-alt: #edf5ff;
-  --primary: #0b6bbf;
-  --primary-deep: #0a3d74;
-  --accent: #1ebd8b;
-  --accent-soft: #dffaf1;
-  --amber: #f2a93b;
-  --danger: #d95f5f;
-  --ink: #0f172a;
-  --muted: #53657f;
-  --line: rgba(15, 23, 42, 0.08);
-  --shadow: 0 24px 64px rgba(12, 38, 76, 0.12);
+  --panel-alt: #eaf1f0;
+  --primary: #1a6b6b;
+  --primary-deep: #0f4a4a;
+  --primary-soft: #e6f3f3;
+  --accent: #c8822e;
+  --accent-soft: #fdf3e3;
+  --accent-deep: #9c6615;
+  --green: #2d7a52;
+  --green-soft: #e6f3ec;
+  --amber: #d4881f;
+  --amber-soft: #fdf1df;
+  --danger: #c43f3f;
+  --danger-soft: #fdecec;
+  --ink: #1a2321;
+  --muted: #5a6663;
+  --line: rgba(26, 35, 33, 0.08);
+  --shadow: 0 24px 64px rgba(15, 74, 74, 0.10);
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
 }
 
 * { box-sizing: border-box; }
@@ -23,7 +33,7 @@ html {
 body {
   margin: 0;
   font-family: inherit;
-  background: linear-gradient(180deg, #edf5ff 0%, var(--bg) 160px, #f8fafc 100%);
+  background: linear-gradient(180deg, #eaf1f0 0%, var(--bg) 160px, #f8f9f8 100%);
   color: var(--ink);
 }
 
@@ -77,7 +87,7 @@ button {
   place-items: center;
   border-radius: 12px;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), #48a9ff);
+  background: linear-gradient(135deg, var(--primary), #2aa198);
   color: #fff;
 }
 
@@ -137,13 +147,13 @@ button {
 }
 
 .primary-button {
-  background: linear-gradient(135deg, var(--primary), #2f8ee8);
+  background: linear-gradient(135deg, var(--primary), #2aa198);
   color: white;
-  box-shadow: 0 12px 24px rgba(11, 107, 191, 0.25);
+  box-shadow: 0 12px 24px rgba(26, 107, 107, 0.25);
 }
 
 .secondary-button {
-  background: #eef4fb;
+  background: #e8f0ef;
   color: var(--primary-deep);
 }
 
@@ -338,9 +348,9 @@ button {
   color: var(--muted);
 }
 
-.stat-card.blue { background: linear-gradient(135deg, #edf6ff, #fff); }
-.stat-card.green { background: linear-gradient(135deg, #eafaf4, #fff); }
-.stat-card.amber { background: linear-gradient(135deg, #fff7ea, #fff); }
+.stat-card.blue { background: linear-gradient(135deg, var(--primary-soft), #fff); }
+.stat-card.green { background: linear-gradient(135deg, var(--green-soft), #fff); }
+.stat-card.amber { background: linear-gradient(135deg, var(--accent-soft), #fff); }
 .stat-card.slate { background: linear-gradient(135deg, #f2f5f8, #fff); }
 
 .content-grid {
@@ -516,6 +526,10 @@ button {
 .status-badge.review { background: rgba(242, 169, 59, 0.14); color: #8b5e00; }
 .status-badge.urgent { background: rgba(217, 95, 95, 0.12); color: #a92b2b; }
 .status-badge.found { background: rgba(30, 189, 139, 0.12); color: #0a6651; }
+.found-case-notice { border-left: 4px solid var(--green); background: var(--green-soft); }
+.found-case-notice h2 { margin: 0 0 8px; }
+.found-case-notice p { line-height: 1.55; }
+.found-case-date { margin-bottom: 0; color: var(--muted); font-size: .84rem; }
 
 .meta-row {
   display: flex;
@@ -596,14 +610,14 @@ button {
   margin-top: 18px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(30, 189, 139, 0.1);
-  color: #0d7a60;
+  background: var(--green-soft);
+  color: var(--green);
   font-weight: 700;
 }
 
 .status-message.error {
-  background: rgba(217, 95, 95, 0.1);
-  color: #a92b2b;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .citizen-search-hero {
@@ -631,15 +645,15 @@ button {
   min-height: 66px;
   margin: 32px auto 0;
   padding: 8px 10px 8px 22px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  border: 1px solid var(--line);
   border-radius: 999px;
   background: white;
-  box-shadow: 0 16px 46px rgba(12, 38, 76, 0.12);
+  box-shadow: 0 16px 46px rgba(15, 74, 74, 0.12);
 }
 
 .case-search:focus-within {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(11, 107, 191, 0.12), 0 16px 46px rgba(12, 38, 76, 0.12);
+  box-shadow: 0 0 0 4px rgba(26, 107, 107, 0.12), 0 16px 46px rgba(15, 74, 74, 0.12);
 }
 
 .case-search input {
@@ -693,7 +707,7 @@ button {
 }
 
 .search-clear {
-  background: #eef4fb;
+  background: #e8f0ef;
   color: var(--primary-deep);
 }
 
@@ -717,6 +731,42 @@ button {
 
 .recent-cases .section-heading h2 {
   margin-bottom: 0;
+}
+
+.case-status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 16px 0 22px;
+}
+
+.case-status-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.case-status-filters button.is-selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.case-status-filters button span {
+  display: grid;
+  min-width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(26, 107, 107, .1);
+  font-size: .72rem;
 }
 
 .public-data-note {
@@ -1104,7 +1154,7 @@ select:focus-visible {
 
 /* Public landing page visual direction */
 body {
-  background: #f8f8f6;
+  background: #f4f7f8;
   font-family: inherit;
 }
 
@@ -1126,7 +1176,7 @@ body {
   min-height: 70px;
   padding: 10px 0;
   border: 0;
-  border-bottom: 1px solid #e4e4df;
+  border-bottom: 1px solid var(--line);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -1147,7 +1197,7 @@ body {
 
 .brand-name {
   margin: 0;
-  color: #202522;
+  color: var(--ink);
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.08em;
@@ -1155,7 +1205,7 @@ body {
 
 .brand-name span,
 .footer-brand span {
-  color: #e98d69;
+  color: var(--accent);
 }
 
 .main-nav {
@@ -1164,7 +1214,7 @@ body {
 
 .nav-link {
   padding: 8px 14px;
-  color: #48534f;
+  color: var(--muted);
   font-size: 0.86rem;
   font-weight: 500;
 }
@@ -1181,10 +1231,10 @@ body {
 .family-login {
   gap: 14px;
   min-height: 44px;
-  border: 1px solid #d9dcd8;
-  border-radius: 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: #252b28;
+  color: var(--ink);
   font-size: 0.86rem;
   font-weight: 600;
   box-shadow: none;
@@ -1437,6 +1487,7 @@ body {
 .flyer-url { max-width: 100%; margin: 7px 0 0; color: #61736a; font-size: .67rem; overflow-wrap: anywhere; }
 .missing-person-flyer footer { margin-top: 15px; color: #78827b; font-size: .62rem; line-height: 1.45; }
 .flyer-preview-help { margin: 0; color: #7c5a19; font-size: .78rem; }
+.flyer-export-help { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
 .moderator-manager-page { max-width: 900px; margin: 0 auto; }
 .moderator-invite-form { box-shadow: 0 3px 12px rgba(36, 48, 42, .045); }
 .moderator-invite-form .section-heading h2, .moderator-list-section .section-heading h2 { margin: 7px 0 16px; color: #202522; font-size: 1.4rem; letter-spacing: -.04em; }

@@ -10,6 +10,7 @@ export type CaseSummary = {
   age?: string;
   region?: string;
   status: string;
+  foundAt?: string;
   lastSeen?: string;
   imageAssetId?: string;
 };
@@ -21,6 +22,7 @@ export type CaseDetail = {
   region?: string;
   lastSeen?: string;
   status: string;
+  foundAt?: string;
   description: string;
   imageAssetId?: string;
 };
