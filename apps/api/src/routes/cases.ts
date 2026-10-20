@@ -9,6 +9,7 @@ type RoutesOptions = { db: Db };
 type StoredCase = CaseRecord & {
   ownerId: string;
   caseNumber: string;
+  publicReference: string;
   visibility: 'private' | 'public';
   publicDescription?: string;
   flyerProfile?: { fields: string[]; summary: string };
@@ -468,6 +469,7 @@ const casesRoutes: FastifyPluginAsync<RoutesOptions> = async (fastify, { db }) =
     const newCase: StoredCase = {
       id,
       caseNumber: id,
+      publicReference: id,
       ownerId: user.id,
       name: body.fullName.trim(),
       age: String(body.age ?? 'Unknown'),
