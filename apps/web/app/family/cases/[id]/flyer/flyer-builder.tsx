@@ -103,7 +103,7 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
       const blob = await toBlob(flyer, {
         pixelRatio: 2,
         cacheBust: true,
-        fetchRequestInit: { credentials: 'include' }
+        fetchRequestInit: { credentials: 'same-origin' }
       });
       if (!blob) throw new Error('The flyer image could not be created.');
 
@@ -175,7 +175,7 @@ export default function FlyerBuilder({ caseId }: { caseId: string }) {
         <article ref={flyerRef} className="missing-person-flyer">
           <header className="flyer-brand"><span className="flyer-brand-mark">R</span><span>REUNITE <small>REPORT - FIND - REUNITE</small></span></header>
           <p className="flyer-alert-label">MISSING PERSON</p>
-          <div className="flyer-portrait">{caseItem.imageAssetId ? <img crossOrigin="use-credentials" src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseItem.imageAssetId)}`} alt={`Photo of ${caseItem.name}`} /> : <span aria-hidden="true">{initials || 'R'}</span>}</div>
+          <div className="flyer-portrait">{caseItem.imageAssetId ? <img crossOrigin="anonymous" src={`${API_BASE_URL}/api/media/${encodeURIComponent(caseItem.imageAssetId)}`} alt={`Photo of ${caseItem.name}`} /> : <span aria-hidden="true">{initials || 'R'}</span>}</div>
           {selected.has('name') ? <h2>{caseItem.name}</h2> : null}
           <div className="flyer-detail-list">
             {selected.has('age') && caseItem.age !== 'Unknown' ? <p><strong>Age</strong><span>{caseItem.age}</span></p> : null}
