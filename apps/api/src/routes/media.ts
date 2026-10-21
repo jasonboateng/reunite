@@ -156,8 +156,23 @@ const mediaRoutes: FastifyPluginAsync<MediaOptions> = async (fastify, { db }) =>
     const downloadUrl = cloudinary.utils.private_download_url(asset.publicId, asset.format, {
       resource_type: 'image', type: 'authenticated', expires_at: Math.floor(Date.now() / 1000) + 60
     });
-    reply.header('Cache-Control', 'private, no-store').header('X-Content-Type-Options', 'nosniff');
-    return reply.redirect(downloadUrl);
+    try {
+      const imageResponse = await fetch(downloadUrl);
+      if (!imageResponse.ok) {
+        request.log.error({ mediaId, statusCode: imageResponse.status }, 'Cloudinary image download failed');
+        return reply.code(502).send({ error: 'The case photo could not be loaded. Try again shortly.' });
+      }
+      const imageBytes = Buffer.from(await imageResponse.arrayBuffer());
+      reply
+        .header('Content-Type', 'image/jpeg')
+        .header('Content-Length', imageBytes.length)
+        .header('Cache-Control', 'private, no-store')
+        .header('X-Content-Type-Options', 'nosniff');
+      return reply.send(imageBytes);
+    } catch (error) {
+      request.log.error({ err: error, mediaId }, 'Cloudinary image download failed');
+      return reply.code(502).send({ error: 'The case photo could not be loaded. Try again shortly.' });
+    }
   });
 };
 
